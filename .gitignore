@@ -1,0 +1,5 @@
+Docs/*.docx
+
+.DS_Store
+**/*.swp
+
