@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-#TODO: Detect invalid county name by checking for "United States" title of
-#      QuickFacts page
-
 
 import pandas as pd
 
@@ -45,8 +42,7 @@ def build_quickfacts_county_map(data_path):
     return county_map
 
 
-# Raised if county not found in data, or county QuickFacts parameter doesn't
-# return a QuickFacts page for that county
+# Raised if county not found in data
 class InvalidCountyException(Exception):
     pass
 
