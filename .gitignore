@@ -1,4 +1,4 @@
-Docs/*.docx
+doc/*.docx
 
 .DS_Store
 **/*.swp
