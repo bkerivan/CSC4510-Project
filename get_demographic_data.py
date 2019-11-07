@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 
+import pandas as pd
 import sys
 
-from lib.quickfacts import build_quickfacts_county_map, QuickFactsScraper
+from lib.quickfacts import QuickFactsScraper
 
 
 if __name__ == "__main__":
@@ -11,11 +12,11 @@ if __name__ == "__main__":
         print("Usage: {} <cleaned data path>".format(sys.argv[0]))
         sys.exit(1)
 
-    county_map = build_quickfacts_county_map(sys.argv[1])
-    scraper = QuickFactsScraper(county_map)
+    data = pd.read_csv(sys.argv[1])
+    data = data[data["state"] != "Alaska"]
 
-    # Seems to work for a few different tested counties
-    scraper.scrape_county_data("Wisconsin", "Oconto")
+    scraper = QuickFactsScraper()
+    scraper.get_bulk_county_data(list(zip(data["state"], data["county"]))[:60])
+
     print(scraper.quickfacts_data)
-    scraper.close()
 
