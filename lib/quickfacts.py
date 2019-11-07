@@ -24,8 +24,6 @@ class QuickFactsImportError(Exception):
 
 
 class QuickFactsScraper:
-    # Needs to be passed the county map, so that each scraper doesn't have to
-    # build from data, which is slow
     def __init__(self, saved_data_path=None):
         self.attributes = ["state", "county"] + list(_QUICKFACTS_ATTRIBUTE_MAP.keys())
 
