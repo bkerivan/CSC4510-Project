@@ -1,4 +1,5 @@
 numpy==1.16.4
 requests==2.21.0
 beautifulsoup4==4.8.1
+grequests==0.4.0
 pandas==0.25.3
