@@ -1,6 +1,6 @@
 import pandas as pd
 import requests
-import grequests
+import time
 
 from bs4 import BeautifulSoup
 
@@ -17,7 +17,6 @@ _QUICKFACTS_ATTRIBUTE_MAP = {
     "race_whtnothsp_pct": "RHI825218"
 }
 
-
 # Raised if imported QuickFacts data has wrong format
 class QuickFactsImportError(Exception):
     pass
@@ -26,6 +25,7 @@ class QuickFactsImportError(Exception):
 class QuickFactsScraper:
     def __init__(self, saved_data_path=None):
         self.attributes = ["state", "county"] + list(_QUICKFACTS_ATTRIBUTE_MAP.keys())
+        self.session = requests.Session()
 
         if saved_data_path:
             self.import_data(saved_data_path)
@@ -40,16 +40,17 @@ class QuickFactsScraper:
             # Haven't figured out how to handle Alaska's "districts" yet
             raise Exception("Counties in Alaska are currently unsupported")
         else:
-            # Remove spaces and periods per QuickFacts URL format
+            # Remove ' ', '.', '-', and "'" per QuickFacts URL format
             quickfacts_county_param = \
-            "{}county{}".format(county.lower().replace(' ', '').replace('.', ''), state.lower().replace(' ', ''))
+            "{}county{}".format(county.lower().replace(' ', '').replace('.', '').replace('-', '').replace('\'', ''),
+                                state.lower().replace(' ', ''))
 
         return "{}/{}".format(_QUICKFACTS_URL, quickfacts_county_param)
 
 
-    # Get data for a single county. Could be used for updating single records.
+    # Get data for a single county
     def get_county_data(self, state, county):
-        r = requests.get(self.build_quickfacts_url(state, county))
+        r = self.session.get(self.build_quickfacts_url(state, county))
 
         if r.status_code != 200:
             r.raise_for_status()
@@ -57,26 +58,11 @@ class QuickFactsScraper:
         self.scrape_quickfacts_page(state, county, r.content)
 
 
-    def _async_exception_handler(self, req, ex):
-        print("[!] {}: {}".format(req.url, ex))
-
-
     # Counties must be a list of two-tuples: (state name, county name)
     def get_bulk_county_data(self, counties):
-        reqs = [grequests.get(self.build_quickfacts_url(state, county), timeout=10)
-                for state, county in counties]
-
-        responses = grequests.map(reqs, exception_handler=self._async_exception_handler)
-
-        for state, county, response in [sc + (r,) for sc, r in zip(counties, responses)]:
-            if not response:
-                continue
-
-            if response.status_code != 200:
-                response.raise_for_status()
-
-            self.scrape_quickfacts_page(state, county, response.content)
-            response.close()
+        for state, county in counties:
+            print("[DEBUG]: {} County, {}".format(county, state))
+            self.get_county_data(state, county)
 
 
     def scrape_quickfacts_page(self, state, county, webpage):
@@ -117,4 +103,8 @@ class QuickFactsScraper:
 
     def export_data(path):
         self.quickfacts_data.to_csv(path, index=False)
+
+
+    def close(self):
+        self.session.close()
 

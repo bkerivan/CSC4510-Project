@@ -3,6 +3,7 @@
 
 import pandas as pd
 import sys
+import time
 
 from lib.quickfacts import QuickFactsScraper
 
@@ -16,7 +17,13 @@ if __name__ == "__main__":
     data = data[data["state"] != "Alaska"]
 
     scraper = QuickFactsScraper()
-    scraper.get_bulk_county_data(list(zip(data["state"], data["county"]))[:60])
+
+    s = time.process_time()
+    scraper.get_bulk_county_data(zip(data["state"], data["county"]))
+    e = time.process_time()
 
     print(scraper.quickfacts_data)
+    print("\n\n{} secs\n\n".format(e - s))
+
+    scraper.close()
 
