@@ -3,10 +3,11 @@
 
 import pandas as pd
 import sys
-import time
+import os
 
 from lib.quickfacts import QuickFactsScraper
 
+DEFAULT_DEMOGRAPHIC_DATA_PATH = os.path.join("data", "demographics.csv")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -16,14 +17,20 @@ if __name__ == "__main__":
     data = pd.read_csv(sys.argv[1])
     data = data[data["state"] != "Alaska"]
 
-    scraper = QuickFactsScraper()
+    scraper = QuickFactsScraper(use_cache=True)
 
-    s = time.process_time()
-    scraper.get_bulk_county_data(zip(data["state"], data["county"]))
-    e = time.process_time()
+    counties = list(zip(data["state"], data["county"]))
 
-    print(scraper.quickfacts_data)
-    print("\n\n{} secs\n\n".format(e - s))
+    print("[*] Scraping QuickFacts pages...")
+    print()
 
+    scraper.get_bulk_county_data(counties, show_progress=True)
     scraper.close()
+
+    print()
+    print("[*] Obtained data for {}/{} counties".format(len(scraper.quickfacts_data), len(counties)))
+
+    scraper.export_data(DEFAULT_DEMOGRAPHIC_DATA_PATH)
+
+    print("[*] Wrote demographic data to {}".format(DEFAULT_DEMOGRAPHIC_DATA_PATH))
 

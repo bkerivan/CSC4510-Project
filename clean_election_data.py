@@ -10,7 +10,7 @@ import os
 import sys
 
 
-DEFAULT_DATA_PATH = os.path.join("Data", "presidential_elections.csv")
+DEFAULT_DATA_PATH = os.path.join("data", "presidential_elections.csv")
 
 
 def clean_election_data(path=DEFAULT_DATA_PATH, year=2016):
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     
     cleaned = clean_election_data(year=year)
 
-    output_path = os.path.join("Data", "election_{}_cleaned.csv".format(year))
+    output_path = os.path.join("data", "election_{}_cleaned.csv".format(year))
     cleaned.to_csv(output_path, index=False)
 
     print()

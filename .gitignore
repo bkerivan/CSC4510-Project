@@ -1,5 +1,9 @@
 **/*.docx
+
+cache.sqlite
+
 lib/__pycache__/
+venv/
 
 .DS_Store
 **/*.swp
