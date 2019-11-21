@@ -10,12 +10,12 @@ import os
 import sys
 
 
-popular_vote_percentages = {
-    2000: {'R': 47.9, 'D': 48.4},
-    2004: {'R': 50.7, 'D': 48.3},
-    2008: {'R': 45.7, 'D': 52.9},
-    2012: {'R': 47.2, 'D': 51.1},
-    2016: {'R': 46.1, 'D': 48.2}
+national_popular_vote_counts = {
+    2000: {'R': 50456002, 'D': 50999897},
+    2004: {'R': 62040610, 'D': 59028444},
+    2008: {'R': 59948323, 'D': 69498516},
+    2012: {'R': 60933504, 'D': 65915795},
+    2016: {'R': 62984828, 'D': 65853514}
 }
 
 
@@ -24,15 +24,20 @@ DEFAULT_DATA_PATH = os.path.join("data", "presidential_elections.csv")
 
 # Calculate Cook Partisan Voting index for a county (row) in the table
 def calculate_pvi(year, row):
-    # This isn't actually the sum for some rows. Could just drop those rows...
-    row = row.drop("totalvotes")
-
-    party_vote_cols = [col for col in row.index if col.endswith("votes")]
-    total_votes = sum(row[party_vote_cols])
+    # PVI uses two-party share
+    two_party_share = row["democratvotes"] + row["republicanvotes"]
 
     winning_party = 'R' if row["republicanvotes"] > row["democratvotes"] else 'D'
-    percentage = (max(row["republicanvotes"], row["democratvotes"]) / total_votes) * 100
-    pvi = int(round(percentage - popular_vote_percentages[year][winning_party])) 
+
+    # Percentage of the two party vote share that the winning party in this county earned
+    percentage = (max(row["republicanvotes"], row["democratvotes"]) / two_party_share)
+
+    # National popular vote percentage of two party share for winning party
+    national_percentage = national_popular_vote_counts[year][winning_party] / (sum(national_popular_vote_counts[year].values()))
+
+    # Actual PVI uses the averages over the past two elections, but this suffices for our purposes
+    pvi = int(round((percentage - national_percentage) * 100)) 
+
     return "{}{}{}".format(winning_party, "+" if pvi >= 0 else "", pvi)
 
 
