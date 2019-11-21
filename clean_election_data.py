@@ -40,6 +40,14 @@ def calculate_pvi(year, row):
 
     return "{}{}{}".format(winning_party, "+" if pvi >= 0 else "", pvi)
 
+# Alternative way of representing partisan lean
+def calculate_partisan_lean(year, row):
+    two_party_share = row["democratvotes"] + row["republicanvotes"]
+    percentage = row["democratvotes"] / two_party_share
+    national_percentage = national_popular_vote_counts[year]['D'] / sum(national_popular_vote_counts[year].values())
+    lean = int(round((percentage - national_percentage) * 100))
+    return lean
+
 
 def clean_election_data(path=DEFAULT_DATA_PATH, year=2016):
     data = pd.read_csv(path)
@@ -77,6 +85,7 @@ def clean_election_data(path=DEFAULT_DATA_PATH, year=2016):
     cleaned.drop_duplicates(inplace=True)
 
     cleaned["PVI"] = cleaned.apply(lambda row: calculate_pvi(year, row), axis=1)
+    cleaned["partisan_lean"] = cleaned.apply(lambda row: calculate_partisan_lean(year, row), axis=1)
 
     return cleaned
 
