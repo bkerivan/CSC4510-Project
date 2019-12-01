@@ -96,9 +96,6 @@ class QuickFactsScraper:
 
         if state == "District of Columbia" and county == "District of Columbia":
             quickfacts_county_param = "DC"
-        elif state == "Alaska":
-            # Haven't figured out how to handle Alaska's "districts" yet
-            raise QuickFactsScraperError("Counties in Alaska are currently unsupported")
         # Misc. replacements... unfortunately these will need to be hard-coded in
         elif county == "Baltimore City" and state == "Maryland":
             quickfacts_county_param = "baltimorecountymaryland"

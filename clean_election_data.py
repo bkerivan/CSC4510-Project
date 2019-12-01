@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
+
 # Writes cleaned election data for a particular year to a separate CSV. Takes a
 # minute to run.
 
+
 import pandas as pd
 import numpy as np
-
 import os
 import sys
 
@@ -52,6 +53,9 @@ def calculate_partisan_lean(year, row):
 def clean_election_data(path=DEFAULT_DATA_PATH, year=2016):
     data = pd.read_csv(path)
     cleaned = data[data["year"] == year].drop(columns = ["FIPS", "office", "candidate", "version"])
+
+    # Haven't figured out how to handle Alaska's "districts" yet
+    cleaned = cleaned[cleaned["state"] != "Alaska"]
 
     # "NA" party cleaned to NaN by Pandas, but it means "other" for us
     cleaned["party"] = cleaned["party"].fillna(value="other")

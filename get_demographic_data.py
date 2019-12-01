@@ -15,7 +15,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     data = pd.read_csv(sys.argv[1])
-    data = data[data["state"] != "Alaska"]
 
     scraper = QuickFactsScraper(use_cache=True)
 

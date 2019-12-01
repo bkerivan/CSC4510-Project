@@ -28,3 +28,6 @@ if __name__ == "__main__":
     print("Average democrat lean: {}".format(d_lean_avg))
     print("Democrat lean stddev: {}".format(d_lean_stddev))
 
+    print()
+    print("Average partisan lean: {}".format(np.mean(data["partisan_lean"])))
+
