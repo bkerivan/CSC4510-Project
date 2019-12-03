@@ -9,14 +9,17 @@ from tqdm import tqdm
 
 _QUICKFACTS_URL = "https://census.gov/quickfacts"
 _QUICKFACTS_ATTRIBUTE_MAP = {
-    "race_wht_pct": "RHI125218",
+#    "race_wht_pct": "RHI125218",
+#    "pop_per_sq_mi": "POP060210",
+    "race_whtnothsp_pct": "RHI825218",
     "race_blkafr_pct": "RHI225218",
     "race_amrindalsk_pct": "RHI325218",
     "race_asn_pct": "RHI425218",
     "race_hwnpcf_pct": "RHI525218",
     "race_multi_pct": "RHI625218",
     "race_hspltn_pct": "RHI725218",
-    "race_whtnothsp_pct": "RHI825218"
+    "college_edu_pct": "EDU685217",
+    "poverty_pct": "IPE120218"
 }
 
 # Raised if imported QuickFacts data has wrong format
